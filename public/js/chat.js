@@ -1,6 +1,9 @@
 // s17.154 \\
 const socket = io()
 
+// server (emit) --> client (recieve) --acknowledgement--> server
+// client (emit) --> server (recieve) --acknowledgement--> client
+
 // s17.155 \\
 // socket.on('countUpdated', (count) => {
 //     console.log('The count has been updated.', count)
@@ -23,7 +26,13 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
     //const message = document.querySelector('#message').value
     const message = e.target.elements.message.value
 
-    socket.emit('sendMessage', message)
+    socket.emit('sendMessage', message, (error) => {
+        // s17.159 \\
+        if (error) {
+            return console.log(error)
+        }
+        console.log('Message delivered.')
+    })
 })
 
 // s17.158 \\
@@ -37,6 +46,9 @@ document.querySelector('#send-location').addEventListener('click', () => {
         socket.emit('sendLocation', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
+            // s17.159 \\
+        }, () => {
+            console.log('Location shared!')
         })
     })
 })

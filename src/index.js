@@ -4,6 +4,7 @@ const http = require('http')
 const express = require('express')
 // s17.154 \\
 const socketio = require('socket.io')
+const Filter = require('bad-words')
 
 const app = express()
 // s17.154 \\
@@ -43,14 +44,24 @@ io.on('connection', (socket) => {
 
     // s17.156 \\
     // challenge
-    socket.on('sendMessage', (message) => {
+    socket.on('sendMessage', (message, callback) => {
+        // s17.159 \\
+        const filter = new Filter()
+
+        if (filter.isProfane(message)) {
+            return callback('Profanity is not allowed!')
+        }
+
         io.emit('message', message)
+        callback('Message delivered.')
     })
 
     // s17.158 \\
     // challenge
-    socket.on('sendLocation', (location) => {
+    socket.on('sendLocation', (location, callback) => {
         io.emit('message', `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`)
+        // s17.159 \\
+        callback()
     })
 
     // s17.157 \\
