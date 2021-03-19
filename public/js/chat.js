@@ -28,6 +28,7 @@ const $messages = document.querySelector('#messages')
 
 // templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
+const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 
 // s17.156 \\
 // challenge
@@ -37,6 +38,18 @@ socket.on('message', (message) => {
     const html = Mustache.render(messageTemplate, {
         message // es6
     })
+    $messages.insertAdjacentHTML('beforeend', html)
+})
+
+// s17.162 \\
+// challenge
+socket.on('locationMessage', (url) => {
+    console.log(url)
+
+    const html = Mustache.render(locationMessageTemplate, {
+        url // es6
+    })
+
     $messages.insertAdjacentHTML('beforeend', html)
 })
 

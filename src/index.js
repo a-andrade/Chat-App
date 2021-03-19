@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
     // s17.158 \\
     // challenge
     socket.on('sendLocation', (location, callback) => {
-        io.emit('message', `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`)
+        io.emit('locationMessage', `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`)
         // s17.159 \\
         callback()
     })
