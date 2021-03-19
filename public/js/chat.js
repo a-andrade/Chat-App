@@ -23,10 +23,21 @@ const $messageFormButton = $messageForm.querySelector('button')
 // challenge
 const $sendLocationButton = document.querySelector('#send-location')
 
+// s17.161 \\
+const $messages = document.querySelector('#messages')
+
+// templates
+const messageTemplate = document.querySelector('#message-template').innerHTML
+
 // s17.156 \\
 // challenge
 socket.on('message', (message) => {
     console.log(message)
+    // s17.161 \\
+    const html = Mustache.render(messageTemplate, {
+        message // es6
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $messageForm.addEventListener('submit', (e) => {
