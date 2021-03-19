@@ -47,6 +47,12 @@ io.on('connection', (socket) => {
         io.emit('message', message)
     })
 
+    // s17.158 \\
+    // challenge
+    socket.on('sendLocation', (location) => {
+        io.emit('message', `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`)
+    })
+
     // s17.157 \\
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left.')
