@@ -1,3 +1,4 @@
+// s17.163 \\
 const generateMessage = (text) => {
     return {
         text, // es6
@@ -5,6 +6,16 @@ const generateMessage = (text) => {
     }
 }
 
+// s17.164 \\
+// challenge
+const generateLocationMessage = (url) => {
+    return {
+        url,
+        createdAt: new Date().getTime()
+    }
+}
+
 module.exports = {
-    generateMessage
+    generateMessage,
+    generateLocationMessage
 }

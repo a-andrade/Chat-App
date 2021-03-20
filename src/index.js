@@ -5,8 +5,8 @@ const express = require('express')
 // s17.154 \\
 const socketio = require('socket.io')
 const Filter = require('bad-words')
-// s17.163 \\
-const { generateMessage } = require('./utils/messages')
+// s17.163/4 \\
+const { generateMessage, generateLocationMessage } = require('./utils/messages')
 
 const app = express()
 // s17.154 \\
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
     // s17.158 \\
     // challenge
     socket.on('sendLocation', (location, callback) => {
-        io.emit('locationMessage', `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`)
+        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps/?q=${location.latitude}, ${location.longitude}`))
         // s17.159 \\
         callback()
     })
