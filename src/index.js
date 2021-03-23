@@ -52,10 +52,10 @@ io.on('connection', (socket) => {
 
         // s17.156 \\
         // challenge
-        socket.emit('message', generateMessage('Welcome!'))
+        socket.emit('message', generateMessage('Admin', 'Welcome!'))
 
         // s17.157 \\
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`))
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`))
 
         callback()
     })
@@ -63,6 +63,10 @@ io.on('connection', (socket) => {
     // s17.156 \\
     // challenge
     socket.on('sendMessage', (message, callback) => {
+        // s17.171 \\
+        // challenge
+        const user = getUser(socket.id)
+
         // s17.159 \\
         const filter = new Filter()
 
@@ -70,14 +74,18 @@ io.on('connection', (socket) => {
             return callback('Profanity is not allowed!')
         }
 
-        io.emit('message', generateMessage(message))
+        io.to(user.room).emit('message', generateMessage(user.username, message))
         callback('Message delivered.')
     })
 
     // s17.158 \\
     // challenge
     socket.on('sendLocation', (location, callback) => {
-        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps/?q=${location.latitude}, ${location.longitude}`))
+        // s17.171 \\
+        // challenge
+        const user = getUser(socket.id)
+
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps/?q=${location.latitude}, ${location.longitude}`))
         // s17.159 \\
         callback()
     })
@@ -88,7 +96,7 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
 
         if (user) {
-            io.to(user.room).emit('message', generateMessage(`${user.username} has left the room.`))
+            io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left the room.`))
         }
     })
 })
