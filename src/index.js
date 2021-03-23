@@ -7,6 +7,8 @@ const socketio = require('socket.io')
 const Filter = require('bad-words')
 // s17.163/4 \\
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
+// s17.170 \\
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
 
 const app = express()
 // s17.154 \\
@@ -38,15 +40,24 @@ io.on('connection', (socket) => {
     // })
 
     // s17.167 \\
-    socket.on('join', ({ username, room }) => {
-        socket.join(room)
+    socket.on('join', ({ username, room }, callback) => {
+        // s17.170 \\
+        const { error, user } = addUser({ id: socket.id, username, room })
+
+        if (error) {
+            return callback(error)
+        }
+
+        socket.join(user.room)
 
         // s17.156 \\
         // challenge
         socket.emit('message', generateMessage('Welcome!'))
 
         // s17.157 \\
-        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`))
+        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`))
+
+        callback()
     })
 
     // s17.156 \\
@@ -73,7 +84,12 @@ io.on('connection', (socket) => {
 
     // s17.157 \\
     socket.on('disconnect', () => {
-        io.emit('message', generateMessage('A user has left.'))
+        // s17.170 \\
+        const user = removeUser(socket.id)
+
+        if (user) {
+            io.to(user.room).emit('message', generateMessage(`${user.username} has left the room.`))
+        }
     })
 })
 
