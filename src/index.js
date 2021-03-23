@@ -37,12 +37,17 @@ io.on('connection', (socket) => {
     //     io.emit('countUpdated', count)
     // })
 
-    // s17.156 \\
-    // challenge
-    socket.emit('message', generateMessage('Welcome!'))
+    // s17.167 \\
+    socket.on('join', ({ username, room }) => {
+        socket.join(room)
 
-    // s17.157 \\
-    socket.broadcast.emit('message', generateMessage('A new user has joined!'))
+        // s17.156 \\
+        // challenge
+        socket.emit('message', generateMessage('Welcome!'))
+
+        // s17.157 \\
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`))
+    })
 
     // s17.156 \\
     // challenge
@@ -75,3 +80,9 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
     console.log('Server is up on port: ' + port)
 })
+
+// socket.emit              --> sends event to specific client
+// io.emit                  --> sends event ot every client
+// socket.broadcast.emit    --> sends event to every client except this
+// io.to.emit               --> sends event to every client in specific room
+// socket.broadcast.to.emit --> sends event to every client except this, in specific room
