@@ -57,6 +57,12 @@ io.on('connection', (socket) => {
         // s17.157 \\
         socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined!`))
 
+        // s17.172 \\
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
+
         callback()
     })
 
@@ -97,6 +103,12 @@ io.on('connection', (socket) => {
 
         if (user) {
             io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left the room.`))
+
+            // s17.172 \\
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
     })
 })
@@ -110,3 +122,5 @@ server.listen(port, () => {
 // socket.broadcast.emit    --> sends event to every client except this
 // io.to.emit               --> sends event to every client in specific room
 // socket.broadcast.to.emit --> sends event to every client except this, in specific room
+
+// SERVER \\
