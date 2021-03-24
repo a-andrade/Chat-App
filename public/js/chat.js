@@ -35,6 +35,30 @@ const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 // options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
+// s17.173 \\
+const autoscroll = () => {
+    // get new message element
+    const $newMessage = $messages.lastElementChild
+
+    // get height of the new message
+    const newMessageStyles = getComputedStyle($newMessage)
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+    const newMessageheight = $newMessage.offsetHeight + newMessageMargin
+
+    // visible height
+    const visibleHeight = $messages.offsetHeight
+
+    // height of message container
+    const containerHeight = $messages.scrollHeight
+
+    // how far have I scrolled
+    const scrollOffset = $messages.scrollTop + visibleHeight
+
+    if (containerHeight - newMessageheight <= scrollOffset) {
+        $messages.scrollTop = $messages.scrollHeight
+    }
+}
+
 // s17.156 \\
 // challenge
 socket.on('message', (message) => {
@@ -46,6 +70,9 @@ socket.on('message', (message) => {
         createdAt: moment(message.createdAt).format('h:mm a')
     })
     $messages.insertAdjacentHTML('beforeend', html)
+
+    // s17.173 \\
+    autoscroll()
 })
 
 // s17.162 \\
